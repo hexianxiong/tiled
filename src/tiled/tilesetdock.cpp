@@ -736,13 +736,18 @@ void TilesetDock::setCurrentTiles(TileLayer *tiles)
     mCurrentTiles = tiles;
 
     // Set the selected tiles on the map document
+    QString name;
     if (tiles) {
         QList<Tile*> selectedTiles;
         for (int y = 0; y < tiles->height(); ++y) {
             for (int x = 0; x < tiles->width(); ++x) {
                 const Cell &cell = tiles->cellAt(x, y);
-                if (!cell.isEmpty())
+                if (!cell.isEmpty()) {
                     selectedTiles.append(cell.tile);
+                    if(name.isEmpty()) {
+                        name = cell.tile->tileset()->name();
+                    }
+                }
             }
         }
         mMapDocument->setSelectedTiles(selectedTiles);
@@ -758,7 +763,9 @@ void TilesetDock::setCurrentTiles(TileLayer *tiles)
         stamp->addTilesets(tiles->usedTilesets());
 
         mEmittingStampCaptured = true;
-        emit stampCaptured(TileStamp(stamp));
+        TileStamp *tmp = new TileStamp(stamp);
+        tmp->setName(name);
+        emit stampCaptured(*tmp);
         mEmittingStampCaptured = false;
     }
 }

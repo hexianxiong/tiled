@@ -185,7 +185,9 @@ void NewTilesetDialog::browse()
     if (!f.isEmpty()) {
         mUi->image->setText(f);
         mPath = f;
-
+        QPixmap image(mPath);
+        mUi->tileWidth->setValue(image.width());
+        mUi->tileHeight->setValue(image.height());
         if (!mNameWasEdited)
             mUi->name->setText(QFileInfo(f).completeBaseName());
     }

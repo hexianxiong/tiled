@@ -117,12 +117,17 @@ bool TileStampModel::setData(const QModelIndex &index, const QVariant &value, in
     return false;
 }
 
-static QPixmap renderThumbnail(const ThumbnailRenderer &renderer)
+static QPixmap renderThumbnail(const ThumbnailRenderer &renderer, const QString &fileName)
 {
-    return QPixmap::fromImage(renderer.render(QSize(64, 64))
-                              .scaled(32, 32,
-                                      Qt::IgnoreAspectRatio,
-                                      Qt::SmoothTransformation));
+
+    if(fileName.isEmpty()) {
+            return QPixmap::fromImage(renderer.render(QSize(64, 64))
+                                      .scaled(64, 64,
+                                              Qt::IgnoreAspectRatio,
+                                              Qt::SmoothTransformation));
+    }
+    return QPixmap::fromImage(QImage(fileName).scaled(64,64,Qt::IgnoreAspectRatio,
+                                                      Qt::SmoothTransformation));
 }
 
 QVariant TileStampModel::data(const QModelIndex &index, int role) const
@@ -139,7 +144,7 @@ QVariant TileStampModel::data(const QModelIndex &index, int role) const
                 QPixmap thumbnail = mThumbnailCache.value(map);
                 if (thumbnail.isNull()) {
                     ThumbnailRenderer renderer(map);
-                    thumbnail = renderThumbnail(renderer);
+                    thumbnail = renderThumbnail(renderer, map->tilesetAt(0).data()->imageSource());
                     mThumbnailCache.insert(map, thumbnail);
                 }
                 return thumbnail;
@@ -164,7 +169,7 @@ QVariant TileStampModel::data(const QModelIndex &index, int role) const
                 QPixmap thumbnail = mThumbnailCache.value(map);
                 if (thumbnail.isNull()) {
                     ThumbnailRenderer renderer(map);
-                    thumbnail = renderThumbnail(renderer);
+                    thumbnail = renderThumbnail(renderer,map->tilesetAt(0).data()->imageSource());
                     mThumbnailCache.insert(map, thumbnail);
                 }
                 return thumbnail;
