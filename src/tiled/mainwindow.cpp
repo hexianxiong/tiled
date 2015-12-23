@@ -1222,8 +1222,9 @@ bool MainWindow::newTileset(const QString &path)
             : path;
 
     NewTilesetDialog newTileset(startLocation, this);
-    newTileset.setTileWidth(map->tileWidth());
-    newTileset.setTileHeight(map->tileHeight());
+    QPixmap image(startLocation);
+    newTileset.setTileWidth(image.width());
+    newTileset.setTileHeight(image.height());
 
     if (SharedTileset tileset = newTileset.createTileset()) {
         mMapDocument->undoStack()->push(new AddTileset(mMapDocument, tileset));
